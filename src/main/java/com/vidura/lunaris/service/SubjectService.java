@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,5 +28,12 @@ public class SubjectService {
         SubjectEntity saved =  subjectRepository.save(subjectEntity);
 
         return  saved.map(modelMapper);
+    }
+
+    public List<SubjectDTO> getAll() {
+        List<SubjectEntity> entities =   subjectRepository.findAll();
+        return entities.stream()
+                .map(entity -> modelMapper.map(entity, SubjectDTO.class))
+                .toList();
     }
 }
