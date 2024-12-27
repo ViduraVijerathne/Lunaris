@@ -1,7 +1,9 @@
 package com.vidura.lunaris.service;
 
 import com.vidura.lunaris.dto.StudentDTO;
+import com.vidura.lunaris.dto.SubjectDTO;
 import com.vidura.lunaris.dto.UserDTO;
+import com.vidura.lunaris.entity.SubjectEntity;
 import com.vidura.lunaris.entity.UserEntity;
 import com.vidura.lunaris.exception.ValidationException;
 import com.vidura.lunaris.model.LoginResponse;
@@ -29,6 +31,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final StudentService studentService;
+    private final SubjectService subjectService;
+    private final DistrictService districtService;
 
     public LoginResponse attemptLogin(String email, String password) {
         var authentication = authenticationManager.authenticate(
@@ -58,6 +62,24 @@ public class AuthService {
 
         studentRegistration.getStudent().validate();
         studentRegistration.getUser().validate();
+        if(studentRegistration.getStudent().getDistrict() != null){
+            if(!districtService.districtExist(studentRegistration.getStudent().getDistrict().getId())){
+                throw  new ValidationException("District does not exist");
+            }
+        }else{
+            throw new ValidationException("Please select a district");
+        }
+        if(studentRegistration.getStudent().getSubjects() != null){
+            for(SubjectDTO subject : studentRegistration.getStudent().getSubjects()){
+                if(!subjectService.subjectExists(subject.getId())){
+                    throw  new ValidationException("Subject does not exist ID:"+subject.getId());
+                }
+            }
+        }else{
+            throw new ValidationException("Please select a subject");
+        }
+
+
         //register user
        Optional<UserDTO> savedUser =  userService.save(studentRegistration.getUser());
 

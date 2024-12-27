@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface SubjectRepository extends JpaRepository<SubjectEntity,Integer> {
     Optional<SubjectEntity> getSubjectEntityByName(String name);
+    Optional<SubjectEntity> getSubjectEntityById(Long id);
 }

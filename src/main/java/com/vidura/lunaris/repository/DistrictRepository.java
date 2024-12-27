@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface DistrictRepository extends JpaRepository<DistrictEntity,Integer> {
     Optional<DistrictEntity> getDistrictEntitiesByName(String name);
+    Optional<DistrictEntity> getDistrictEntityById(Long id);
 }

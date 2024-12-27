@@ -36,4 +36,9 @@ public class SubjectService {
                 .map(entity -> modelMapper.map(entity, SubjectDTO.class))
                 .toList();
     }
+
+    public boolean subjectExists(Long id) throws ValidationException {
+        Optional<SubjectEntity> subject =  subjectRepository.getSubjectEntityById(id);
+        return subject.isPresent();
+    }
 }

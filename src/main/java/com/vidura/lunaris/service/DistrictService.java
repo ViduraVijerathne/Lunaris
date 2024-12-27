@@ -33,4 +33,9 @@ public class DistrictService {
        List<DistrictEntity> districtEntities = districtRepository.findAll();
        return  districtEntities.stream().map(districtEntity -> modelMapper.map(districtEntity,DistrictDTO.class)).toList();
     }
+
+    public boolean districtExist(Long id){
+       Optional<DistrictEntity> districtEntityOptional = districtRepository.getDistrictEntityById(id);
+       return districtEntityOptional.isPresent();
+    }
 }
