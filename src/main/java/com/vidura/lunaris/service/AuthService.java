@@ -2,6 +2,7 @@ package com.vidura.lunaris.service;
 
 import com.vidura.lunaris.dto.StudentDTO;
 import com.vidura.lunaris.dto.SubjectDTO;
+import com.vidura.lunaris.dto.TeacherDTO;
 import com.vidura.lunaris.dto.UserDTO;
 import com.vidura.lunaris.entity.SubjectEntity;
 import com.vidura.lunaris.entity.UserEntity;
@@ -33,6 +34,7 @@ public class AuthService {
     private final StudentService studentService;
     private final SubjectService subjectService;
     private final DistrictService districtService;
+    private final TeacherService teacherService;
 
     public LoginResponse attemptLogin(String email, String password) {
         var authentication = authenticationManager.authenticate(
@@ -40,7 +42,6 @@ public class AuthService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
         var principal = (UserPrincipal) authentication.getPrincipal();
-
         var token = jwtIssuer.issue(JwtIssuer.Request.builder()
                 .userId(principal.getUserId())
                 .email(principal.getEmail())
@@ -91,6 +92,40 @@ public class AuthService {
             throw new ValidationException("something went wrong in here AUTH SERVICE | REGISTER STUDENT");
         }
         return  studentRegistration;
+
+    }
+    public TeacherDTO register(TeacherDTO teacherDTO)throws ValidationException{
+        if(teacherDTO.getUserDTO() == null){
+            teacherDTO.validate();
+        }
+        teacherDTO.getUserDTO().setRole("ROLE_TEACHER");
+        teacherDTO.setEmail(teacherDTO.getUserDTO().getEmail());
+        teacherDTO.validate();
+
+        Optional<UserEntity> existEmailUser = userService.findByEmail(teacherDTO.getUserDTO().getEmail());
+        if(existEmailUser.isPresent()){
+            throw  new ValidationException("Email already exist");
+        }
+
+
+        if(!subjectService.subjectExists(teacherDTO.getSubjectDTO().getId())){
+            throw  new ValidationException("Subject not exist");
+        }
+
+        Optional<UserDTO> savedUserDTO = userService.save(teacherDTO.getUserDTO());
+        if(savedUserDTO.isPresent()) {
+            teacherDTO.setUserDTO(savedUserDTO.get());
+            Optional<TeacherDTO> savedTeacher = teacherService.save(teacherDTO);
+            if(savedTeacher.isPresent()){
+                savedTeacher.get().setSubjectDTO(teacherDTO.getSubjectDTO());
+                savedTeacher.get().setUserDTO(savedUserDTO.get());
+                return  savedTeacher.get();
+            }else{
+                throw  new ValidationException("something went wrong teacher is not save AUTHSERVICE | REGISTER TEACHER ");
+            }
+        }else{
+            throw new  ValidationException("something went wrong user is not save  AUTHSERVICE | REGISTER TEACHER");
+        }
 
     }
 }

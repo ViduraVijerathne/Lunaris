@@ -1,6 +1,8 @@
 package com.vidura.lunaris.controller;
 
 import com.vidura.lunaris.dto.StudentDTO;
+import com.vidura.lunaris.dto.SubjectDTO;
+import com.vidura.lunaris.dto.TeacherDTO;
 import com.vidura.lunaris.dto.UserDTO;
 import com.vidura.lunaris.exception.ValidationException;
 import com.vidura.lunaris.model.LoginRequest;
@@ -34,13 +36,35 @@ public class AuthController {
         }
     }
 
+
+    @PostMapping("/auth/register/teacher")
+    public ResponseEntity reg(@RequestBody @Validated TeacherDTO request) {
+        try{
+            TeacherDTO teacherDTO = authService.register(request);
+            return  ResponseEntity.ok(teacherDTO);
+        }catch (ValidationException ex){
+            return  ex.getResponse();
+        }
+    }
+
+
 //    @GetMapping("/public/test")
-//    public StudentRegistrationModel test() {
-//
-//        var stdnt =   new StudentRegistrationModel();
-//        stdnt.setUser(new UserDTO());
-//        stdnt.setStudent(new StudentDTO());
-//        return  stdnt;
+//    public TeacherRegistrationModel test() {
+//        TeacherDTO t = TeacherDTO.builder().id(1L).email("e")
+//                .nic("200323")
+//                .phone("075")
+//                .firstName("vidura")
+//                .lastName("fjf")
+//                .slogan("slo")
+//                .education("djd")
+//                .subjectDTO(new SubjectDTO())
+//                .userDTO(new UserDTO())
+//                .build();
+//        TeacherRegistrationModel reg = TeacherRegistrationModel.builder()
+//                .teacher(t)
+//                .user(new UserDTO())
+//                .build();
+//        return  reg;
 //    }
 
 
