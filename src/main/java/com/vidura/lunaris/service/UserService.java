@@ -1,11 +1,8 @@
 package com.vidura.lunaris.service;
 
-import com.vidura.lunaris.dto.StudentDTO;
 import com.vidura.lunaris.dto.UserDTO;
-import com.vidura.lunaris.entity.StudentEntity;
 import com.vidura.lunaris.entity.UserEntity;
 import com.vidura.lunaris.exception.ValidationException;
-import com.vidura.lunaris.repository.StudentRepository;
 import com.vidura.lunaris.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,7 +16,6 @@ public class UserService {
     private static final String EXISTING_EMAIL = "test@test.com";
     private static final String OTHER_EMAIL = "other@test.com";
 
-    private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
 
@@ -49,7 +45,7 @@ public class UserService {
 //        }
     }
 
-    public Optional<UserDTO> save(UserDTO userDTO)throws ValidationException {
+    public Optional<UserDTO> register(UserDTO userDTO)throws ValidationException {
         userDTO.validate();
         Optional<UserEntity> exist = userRepository.findUserEntitiesByEmail(userDTO.getEmail());
         if (exist.isPresent()) {
